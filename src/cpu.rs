@@ -84,6 +84,42 @@ impl Cpu {
 			(0x7, _, _, _) => {
 				self.reg_v[x] += byte;
 			}
+			(0x8, _, _, 0x0) => {
+				self.reg_v[x] = self.reg_v[y];
+			}
+			(0x8, _, _, 0x1) => {
+				self.reg_v[x] |= self.reg_v[y];
+			}
+			(0x8, _, _, 0x2) => {
+				self.reg_v[x] &= self.reg_v[y];
+			}
+			(0x8, _, _, 0x3) => {
+				self.reg_v[x] ^= self.reg_v[y];
+			}
+			(0x8, _, _, 0x4) => {
+				let (result, overflow) =
+					self.reg_v[x].overflowing_add(self.reg_v[y]);
+				self.reg_v[x] = result;
+				self.reg_v[0xF] = if overflow { 1 } else { 0 };
+			}
+			(0x8, _, _, 0x5) => {
+				let (result, borow) = self.reg_v[x].overflowing_sub(self.reg_v[y]);
+				self.reg_v[x] = result;
+				self.reg_v[0xF] = if borow { 0 } else { 1 };
+			}
+			(0x8, _, _, 0x6) => {
+				self.reg_v[0xF] = if (self.reg_v[x] % 2) == 1 { 1 } else { 0 };
+				self.reg_v[x] >>= 1;
+			}
+			(0x8, _, _, 0x7) => {
+				let (result, borow) = self.reg_v[y].overflowing_sub(self.reg_v[x]);
+				self.reg_v[x] = result;
+				self.reg_v[0xF] = if borow { 0 } else { 1 };
+			}
+			(0x8, _, _, 0xE) => {
+				self.reg_v[0xF] = if (self.reg_v[x] & 0x8) == 0x8 { 1 } else { 0 };
+				self.reg_v[x] <<= 1;
+			}
 			_ => unreachable!(),
 		};
 	}
