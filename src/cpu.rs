@@ -32,7 +32,64 @@ impl Cpu {
 	}
 
 	pub fn cycle(&mut self) {
+		let operation = self.read_word(self.pc);
 		self.pc += 2;
+		self.exec_op_code(operation);
+	}
+
+	fn exec_op_code(&mut self, operation: u16) {
+		//utils
+		let addr = usize::from(operation & 0xFFF);
+		let nibble = operation & 0xF;
+		let byte = (operation & 0xFF) as u8;
+		let h = operation & 0xF000 >> 12;
+		let x = (operation & 0xF00 >> 8) as usize;
+		let y = (operation & 0xF0 >> 4) as usize;
+		let l = operation & 0xF;
+
+		match (h, x, y, l) {
+			(0x0, 0x0, 0xE, 0x0) => {
+				unimplemented!();
+			}
+			(0x0, 0x0, 0xE, 0xE) => {
+				self.sp -= 2;
+				self.pc = self.stack[self.sp];
+			}
+			(0x1, _, _, _) => {
+				self.pc = addr;
+			}
+			(0x2, _, _, _) => {
+				self.stack[self.sp] = self.pc + 2;
+				self.pc = addr;
+				self.sp += 1;
+			}
+			(0x3, _, _, _) => {
+				if byte == self.reg_v[x] {
+					self.pc += 2;
+				}
+			}
+			(0x4, _, _, _) => {
+				if byte != self.reg_v[x] {
+					self.pc += 2;
+				}
+			}
+			(0x5, _, _, 0x0) => {
+				if self.reg_v[x] == self.reg_v[y] {
+					self.pc += 2
+				}
+			}
+			(0x6, _, _, _) => {
+				self.reg_v[x] = byte;
+			}
+			(0x7, _, _, _) => {
+				self.reg_v[x] += byte;
+			}
+			_ => unreachable!(),
+		};
+	}
+
+	fn read_word(&self, index: usize) -> u16 {
+		u16::from(self.memory[index]) << 8 | u16::from(self.memory[index + 1])
 	}
 
 	pub fn dump_memory(&self) {
@@ -64,4 +121,14 @@ mod tests {
 		proc.cycle();
 		assert_eq!(pc_before + 2, proc.pc);
 	}
+
+	#[test]
+	fn test_read_word() {
+		let mut proc = Cpu::new();
+		proc.memory[proc.pc] = 0xFF;
+		proc.memory[proc.pc + 1] = 0xEE;
+		assert_eq!(proc.read_word(proc.pc), 0xFFEE);
+	}
+
+	//TODO: TEST all operations
 }

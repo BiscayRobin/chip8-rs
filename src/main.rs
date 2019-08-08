@@ -24,4 +24,6 @@ fn main() {
 
 	processor.load_at(&font::FONT, 0);
 	processor.load_at(&rom, 0x200);
+
+	processor.cycle()
 }
