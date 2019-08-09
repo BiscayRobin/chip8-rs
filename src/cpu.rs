@@ -5,7 +5,7 @@ pub struct Cpu {
 	stack: [usize; 16],
 	pc: usize,
 	reg_v: [u8; 16],
-	reg_i: u16,
+	reg_i: usize,
 	delay_t: u8,
 	delay_s: u8,
 	memory: [u8; 4096],
@@ -119,6 +119,66 @@ impl Cpu {
 			(0x8, _, _, 0xE) => {
 				self.reg_v[0xF] = if (self.reg_v[x] & 0x8) == 0x8 { 1 } else { 0 };
 				self.reg_v[x] <<= 1;
+			}
+			(0x9, _, _, 0) => {
+				if self.reg_v[x] != self.reg_v[y] {
+					self.pc += 2;
+				}
+			}
+			(0xA, _, _, _) => {
+				self.reg_i = addr;
+			}
+			(0xB, _, _, _) => {
+				self.pc = addr + self.reg_v[0x0] as usize;
+			}
+			(0xC, _, _, _) => {
+				self.reg_v[x] = self.rng.gen();
+			}
+			(0xD, _, _, _) => {
+				//TODO
+				unimplemented!();
+			}
+			(0xE, _, 0x9, 0xE) => {
+				//TODO
+				unimplemented!();
+			}
+			(0xE, _, 0xA, 0x1) => {
+				//TODO
+				unimplemented!();
+			}
+			(0xF, _, 0x0, 0x7) => {
+				self.reg_v[x] = self.delay_t;
+			}
+			(0xF, _, 0x0, 0xA) => {
+				//TODO
+				unimplemented!();
+			}
+			(0xF, _, 0x1, 0x5) => {
+				self.delay_t = self.reg_v[x];
+			}
+			(0xF, _, 0x1, 0x8) => {
+				self.delay_s = self.reg_v[x];
+			}
+			(0xF, _, 0x1, 0xE) => {
+				self.reg_i += usize::from(self.reg_v[x]);
+			}
+			(0xF, _, 0x2, 0x9) => {
+				self.reg_i = usize::from(self.reg_v[x]) * 5;
+			}
+			(0xF, _, 0x3, 0x3) => {
+				let val = self.reg_v[x];
+				self.memory[self.reg_i] = val / 100;
+				self.memory[self.reg_i + 1] = (val / 10) % 10;
+				self.memory[self.reg_i + 2] = val % 10;
+			}
+			(0xF, _, 0x5, 0x5) => {
+				self.memory[self.reg_i..=self.reg_i + x as usize]
+					.copy_from_slice(&self.reg_v[0..=x as usize]);
+			}
+			(0xF, _, 0x6, 0x5) => {
+				self.reg_v[0..=x as usize].copy_from_slice(
+					&self.memory[self.reg_i..=self.reg_i + x as usize + 1],
+				);
 			}
 			_ => unreachable!(),
 		};
