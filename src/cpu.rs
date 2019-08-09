@@ -1,3 +1,4 @@
+use crate::display::Display;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 
 pub struct Cpu {
@@ -9,6 +10,7 @@ pub struct Cpu {
 	delay_t: u8,
 	delay_s: u8,
 	memory: [u8; 4096],
+	display: Display,
 	rng: ThreadRng,
 }
 
@@ -23,6 +25,7 @@ impl Cpu {
 			delay_t: 16,
 			delay_s: 16,
 			memory: [0; 4096],
+			display: Display::new(),
 			rng: thread_rng(),
 		}
 	}
@@ -35,24 +38,32 @@ impl Cpu {
 		let operation = self.read_word(self.pc);
 		self.pc += 2;
 		self.exec_op_code(operation);
+
+		if self.delay_t > 0 {
+			self.delay_t -= 1;
+		}
+	}
+
+	pub fn get_minifb_buffer(&self) -> [u32; 640 * 320] {
+		self.display.to_minifb_buffer()
 	}
 
 	fn exec_op_code(&mut self, operation: u16) {
 		//utils
 		let addr = usize::from(operation & 0xFFF);
-		let nibble = operation & 0xF;
+		let nibble = (operation & 0xF) as usize;
 		let byte = (operation & 0xFF) as u8;
-		let h = operation & 0xF000 >> 12;
-		let x = (operation & 0xF00 >> 8) as usize;
-		let y = (operation & 0xF0 >> 4) as usize;
+		let h = (operation & 0xF000) >> 12;
+		let x = ((operation & 0xF00) >> 8) as usize;
+		let y = ((operation & 0xF0) >> 4) as usize;
 		let l = operation & 0xF;
 
 		match (h, x, y, l) {
 			(0x0, 0x0, 0xE, 0x0) => {
-				unimplemented!();
+				self.display.cls();
 			}
 			(0x0, 0x0, 0xE, 0xE) => {
-				self.sp -= 2;
+				self.sp -= 1;
 				self.pc = self.stack[self.sp];
 			}
 			(0x1, _, _, _) => {
@@ -135,8 +146,13 @@ impl Cpu {
 				self.reg_v[x] = self.rng.gen();
 			}
 			(0xD, _, _, _) => {
-				//TODO
-				unimplemented!();
+				for i in 0..nibble {
+					self.display.draw_line_at(
+						self.memory[self.reg_i + i],
+						self.reg_v[x],
+						self.reg_v[y] + i as u8,
+					);
+				}
 			}
 			(0xE, _, 0x9, 0xE) => {
 				//TODO
@@ -177,7 +193,7 @@ impl Cpu {
 			}
 			(0xF, _, 0x6, 0x5) => {
 				self.reg_v[0..=x as usize].copy_from_slice(
-					&self.memory[self.reg_i..=self.reg_i + x as usize + 1],
+					&self.memory[self.reg_i..=self.reg_i + x as usize],
 				);
 			}
 			_ => unreachable!(),
@@ -186,10 +202,6 @@ impl Cpu {
 
 	fn read_word(&self, index: usize) -> u16 {
 		u16::from(self.memory[index]) << 8 | u16::from(self.memory[index + 1])
-	}
-
-	pub fn dump_memory(&self) {
-		println!("{:?}", &self.memory[..]);
 	}
 }
 
