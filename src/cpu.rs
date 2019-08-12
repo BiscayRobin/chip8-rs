@@ -66,6 +66,8 @@ impl Cpu {
 		let y = ((operation & 0xF0) >> 4) as usize;
 		let l = operation & 0xF;
 
+		println!("ope: {:x}", operation);
+
 		match (h, x, y, l) {
 			(0x0, 0x0, 0xE, 0x0) => {
 				self.display.cls();
@@ -151,15 +153,17 @@ impl Cpu {
 				self.pc = addr + self.reg_v[0x0] as usize;
 			}
 			(0xC, _, _, _) => {
-				self.reg_v[x] = self.rng.gen();
+				self.reg_v[x] = self.rng.gen::<u8>() & byte;
 			}
 			(0xD, _, _, _) => {
 				for i in 0..nibble {
-					self.display.draw_line_at(
+					if self.display.draw_line_at(
 						self.memory[self.reg_i + i],
 						self.reg_v[x],
 						self.reg_v[y] + i as u8,
-					);
+					) {
+						self.reg_v[0xF] = 1;
+					}
 				}
 			}
 			(0xE, _, 0x9, 0xE) => {
@@ -173,6 +177,7 @@ impl Cpu {
 				}
 			}
 			(0xF, _, 0x0, 0x7) => {
+				println!("{}", self.delay_t);
 				self.reg_v[x] = self.delay_t;
 			}
 			(0xF, _, 0x0, 0xA) => {
