@@ -13,7 +13,6 @@ impl Keyboard {
 
 	pub fn press_key(&mut self, key: u8) {
 		self.keys[key as usize] = true;
-		println!("pressed: {:x}", key);
 	}
 
 	pub fn release_key(&mut self, key: u8) {
