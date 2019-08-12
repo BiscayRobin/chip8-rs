@@ -26,14 +26,14 @@ impl Keyboard {
 
 	pub fn update_keys(&mut self, window: &Window) {
 		self.keys = [false; 0x10];
-		let x = (*window).get_keys_pressed(KeyRepeat::No);
+		let x = (*window).get_keys_pressed(KeyRepeat::Yes);
 		if let Some(keys) = x {
 			for k in keys {
 				let id = match k {
-					Key::Key1 => 0x1,
-					Key::Key2 => 0x2,
-					Key::Key3 => 0x3,
-					Key::Key4 => 0xC,
+					Key::F1 => 0x1,
+					Key::F2 => 0x2,
+					Key::F3 => 0x3,
+					Key::F4 => 0xC,
 					Key::A => 0x4,
 					Key::Z => 0x5,
 					Key::E => 0x6,

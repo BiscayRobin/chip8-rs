@@ -52,7 +52,7 @@ impl Cpu {
 		self.display.to_minifb_buffer()
 	}
 
-	pub fn update_keys(&mut self,window: &Window) {
+	pub fn update_keys(&mut self, window: &Window) {
 		self.keyboard.update_keys(window);
 	}
 
@@ -101,7 +101,7 @@ impl Cpu {
 				self.reg_v[x] = byte;
 			}
 			(0x7, _, _, _) => {
-				self.reg_v[x] += byte;
+				self.reg_v[x] = self.reg_v[x].wrapping_add(byte);
 			}
 			(0x8, _, _, 0x0) => {
 				self.reg_v[x] = self.reg_v[y];
@@ -163,13 +163,11 @@ impl Cpu {
 				}
 			}
 			(0xE, _, 0x9, 0xE) => {
-				//TODO
 				if self.keyboard.is_key_down(self.reg_v[x]) {
 					self.pc += 2;
 				}
 			}
 			(0xE, _, 0xA, 0x1) => {
-				//TODO
 				if !self.keyboard.is_key_down(self.reg_v[x]) {
 					self.pc += 2;
 				}
@@ -178,7 +176,6 @@ impl Cpu {
 				self.reg_v[x] = self.delay_t;
 			}
 			(0xF, _, 0x0, 0xA) => {
-				//TODO
 				let mut key_pressed = false;
 				for key in 0..0x10 {
 					if self.keyboard.is_key_down(key) {

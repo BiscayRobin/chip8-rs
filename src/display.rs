@@ -24,14 +24,23 @@ impl Display {
 		self.screen = [false; 64 * 32];
 	}
 
-	pub fn draw_line_at(&mut self, byte: u8, idx: u8, idy: u8) {
+	pub fn draw_line_at(&mut self, byte: u8, idx: u8, idy: u8) -> bool {
+		let mut collision = false;
 		for i in 0..8 {
+			let to_print = byte.get_bit(7 - i);
+			if self.screen
+				[coord_to_index((idx as usize + i) % 64, (idy as usize) % 32, 64)]
+				&& to_print
+			{
+				collision = true;
+			}
 			self.screen[coord_to_index(
 				(idx as usize + i) % 64,
 				(idy as usize) % 32,
 				64,
-			)] ^= byte.get_bit(7 - i);
+			)] ^= to_print;
 		}
+		collision
 	}
 
 	pub fn to_minifb_buffer(&self) -> [u32; 640 * 320] {
