@@ -1,5 +1,6 @@
 use crate::display::Display;
 use crate::keyboard::Keyboard;
+use minifb::Window;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 
 pub struct Cpu {
@@ -49,6 +50,10 @@ impl Cpu {
 
 	pub fn get_minifb_buffer(&self) -> [u32; 640 * 320] {
 		self.display.to_minifb_buffer()
+	}
+
+	pub fn update_keys(&mut self,window: &Window) {
+		self.keyboard.update_keys(window);
 	}
 
 	fn exec_op_code(&mut self, operation: u16) {

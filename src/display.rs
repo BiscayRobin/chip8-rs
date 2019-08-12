@@ -30,7 +30,7 @@ impl Display {
 				(idx as usize + i) % 64,
 				(idy as usize) % 32,
 				64,
-			)] = byte.get_bit(7 - i);
+			)] ^= byte.get_bit(7 - i);
 		}
 	}
 

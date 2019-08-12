@@ -34,6 +34,8 @@ fn main() {
 		});
 
 	while window.is_open() && !window.is_key_down(Key::Escape) {
+		processor.update_keys(&window);
+
 		window.update_with_buffer(&processor.get_minifb_buffer())
 			.unwrap();
 		processor.cycle();
