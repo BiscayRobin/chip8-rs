@@ -1,4 +1,5 @@
 use crate::display::Display;
+use crate::keyboard::Keyboard;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 
 pub struct Cpu {
@@ -11,6 +12,7 @@ pub struct Cpu {
 	delay_s: u8,
 	memory: [u8; 4096],
 	display: Display,
+	keyboard: Keyboard,
 	rng: ThreadRng,
 }
 
@@ -26,6 +28,7 @@ impl Cpu {
 			delay_s: 16,
 			memory: [0; 4096],
 			display: Display::new(),
+			keyboard: Keyboard::new(),
 			rng: thread_rng(),
 		}
 	}
@@ -156,18 +159,31 @@ impl Cpu {
 			}
 			(0xE, _, 0x9, 0xE) => {
 				//TODO
-				unimplemented!();
+				if self.keyboard.is_key_down(self.reg_v[x]) {
+					self.pc += 2;
+				}
 			}
 			(0xE, _, 0xA, 0x1) => {
 				//TODO
-				unimplemented!();
+				if !self.keyboard.is_key_down(self.reg_v[x]) {
+					self.pc += 2;
+				}
 			}
 			(0xF, _, 0x0, 0x7) => {
 				self.reg_v[x] = self.delay_t;
 			}
 			(0xF, _, 0x0, 0xA) => {
 				//TODO
-				unimplemented!();
+				let mut key_pressed = false;
+				for key in 0..0x10 {
+					if self.keyboard.is_key_down(key) {
+						key_pressed = true;
+						self.reg_v[x] = key;
+					}
+				}
+				if !key_pressed {
+					self.pc -= 2;
+				}
 			}
 			(0xF, _, 0x1, 0x5) => {
 				self.delay_t = self.reg_v[x];

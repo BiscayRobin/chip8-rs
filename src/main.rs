@@ -2,6 +2,7 @@ mod bits;
 mod cpu;
 mod display;
 mod font;
+mod keyboard;
 
 use clap::{App, Arg};
 use cpu::Cpu;
