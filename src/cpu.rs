@@ -66,8 +66,6 @@ impl Cpu {
 		let y = ((operation & 0xF0) >> 4) as usize;
 		let l = operation & 0xF;
 
-		println!("ope: {:x}", operation);
-
 		match (h, x, y, l) {
 			(0x0, 0x0, 0xE, 0x0) => {
 				self.display.cls();
@@ -80,7 +78,7 @@ impl Cpu {
 				self.pc = addr;
 			}
 			(0x2, _, _, _) => {
-				self.stack[self.sp] = self.pc + 2;
+				self.stack[self.sp] = self.pc;
 				self.pc = addr;
 				self.sp += 1;
 			}
@@ -177,7 +175,6 @@ impl Cpu {
 				}
 			}
 			(0xF, _, 0x0, 0x7) => {
-				println!("{}", self.delay_t);
 				self.reg_v[x] = self.delay_t;
 			}
 			(0xF, _, 0x0, 0xA) => {
@@ -233,32 +230,113 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn test_new() {
+	fn new() {
 		let proc = Cpu::new();
 		assert_eq!(proc.pc, 0x200);
 	}
 
 	#[test]
-	fn test_load_at() {
+	fn load_at() {
 		let mut proc = Cpu::new();
 		proc.load_at(&[1, 2, 3, 4], 2);
 		assert_eq!(proc.memory[0..6], [0, 0, 1, 2, 3, 4])
 	}
 
 	#[test]
-	fn test_cycle() {
+	fn cycle() {
 		let mut proc = Cpu::new();
 		let pc_before = proc.pc;
+		proc.memory[0x200] = 0x60; // instruction that don't jump to test pc
 		proc.cycle();
 		assert_eq!(pc_before + 2, proc.pc);
 	}
 
 	#[test]
-	fn test_read_word() {
+	fn read_word() {
 		let mut proc = Cpu::new();
 		proc.memory[proc.pc] = 0xFF;
 		proc.memory[proc.pc + 1] = 0xEE;
 		assert_eq!(proc.read_word(proc.pc), 0xFFEE);
+	}
+
+	#[test]
+	fn cls() {
+		let mut proc = Cpu::new();
+		proc.display.draw_line_at(0xFF, 0, 0);
+		let before = proc.display.dump();
+		proc.display.cls();
+		let after = proc.display.dump();
+		assert_ne!(before[..], after[..]);
+	}
+
+	#[test]
+	fn ret() {
+		let mut proc = Cpu::new();
+		proc.sp = 1;
+		proc.stack[0] = 0x200;
+		proc.pc = 0x300;
+		let before = proc.pc;
+		proc.exec_op_code(0x00EE);
+		let after = proc.pc;
+		assert_ne!(before, after);
+		assert_eq!(proc.sp, 0x0);
+	}
+
+	#[test]
+	fn jp_addr() {
+		let mut proc = Cpu::new();
+		proc.exec_op_code(0x1523);
+		assert_eq!(proc.pc, 0x523);
+	}
+
+	#[test]
+	fn call_addr() {
+		let mut proc = Cpu::new();
+		let before = proc.pc;
+		proc.exec_op_code(0x2523);
+		assert_eq!(proc.pc, 0x523);
+		assert_eq!(proc.stack[proc.sp - 1], before);
+	}
+
+	#[test]
+	fn se_vx_byte() {
+		let mut proc = Cpu::new();
+		proc.reg_v[0x0] = 0xF;
+		let before = proc.pc;
+		proc.exec_op_code(0x300F);
+		let after_1 = proc.pc;
+		proc.exec_op_code(0x300E);
+		let after_2 = proc.pc;
+		assert_eq!(before + 2, after_1);
+		assert_eq!(after_1, after_2);
+	}
+
+	#[test]
+	fn sne_vx_byte() {
+		let mut proc = Cpu::new();
+		proc.reg_v[0x0] = 0xF;
+		let before = proc.pc;
+		proc.exec_op_code(0x400F);
+		let after_1 = proc.pc;
+		proc.exec_op_code(0x400E);
+		let after_2 = proc.pc;
+		assert_eq!(before, after_1);
+		assert_eq!(after_1 + 2, after_2);
+	}
+
+	#[test]
+	fn se_vx_vy() {
+		let mut proc = Cpu::new();
+		proc.reg_v[0x0] = 0xF;
+		proc.reg_v[0x1] = 0xE;
+		let before = proc.pc;
+		proc.exec_op_code(0x5010);
+		let after_1 = proc.pc;
+		proc.reg_v[0x1] = 0xF;
+		proc.exec_op_code(0x5010);
+		let after_2 = proc.pc;
+		assert_eq!(before, after_1);
+		assert_eq!(after_1 + 2, after_2);
 	}
 
 	//TODO: TEST all operations
