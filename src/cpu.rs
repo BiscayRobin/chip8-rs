@@ -355,10 +355,10 @@ mod tests {
 	fn add_vx_byte() {
 		let mut proc = Cpu::new();
 		proc.reg_v[0x0] = 0xE;
-		proc.exec_op_code(0x7001);
-		assert_eq!(proc.reg_v[0x0], 0xF);
-		proc.exec_op_code(0x7002);
-		assert_eq!(proc.reg_v[0x0], 0x1);
+		proc.exec_op_code(0x7003);
+		assert_eq!(proc.reg_v[0x0], 0x11);
+		proc.exec_op_code(0x70FF);
+		assert_eq!(proc.reg_v[0x0], 0x10);
 	}
 
 	//TODO: TEST all operations
