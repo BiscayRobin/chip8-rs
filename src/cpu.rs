@@ -42,9 +42,14 @@ impl Cpu {
 		let operation = self.read_word(self.pc);
 		self.pc += 2;
 		self.exec_op_code(operation);
+	}
 
+	pub fn update_clock(&mut self) {
 		if self.delay_t > 0 {
 			self.delay_t -= 1;
+		}
+		if self.delay_s > 0 {
+			self.delay_s -= 1;
 		}
 	}
 
@@ -337,6 +342,23 @@ mod tests {
 		let after_2 = proc.pc;
 		assert_eq!(before, after_1);
 		assert_eq!(after_1 + 2, after_2);
+	}
+
+	#[test]
+	fn ld_vx_byte() {
+		let mut proc = Cpu::new();
+		proc.exec_op_code(0x60FF);
+		assert_eq!(proc.reg_v[0x0], 0xFF);
+	}
+
+	#[test]
+	fn add_vx_byte() {
+		let mut proc = Cpu::new();
+		proc.reg_v[0x0] = 0xE;
+		proc.exec_op_code(0x7001);
+		assert_eq!(proc.reg_v[0x0], 0xF);
+		proc.exec_op_code(0x7002);
+		assert_eq!(proc.reg_v[0x0], 0x1);
 	}
 
 	//TODO: TEST all operations

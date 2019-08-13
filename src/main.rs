@@ -8,6 +8,7 @@ use clap::{App, Arg};
 use cpu::Cpu;
 use minifb::{Key, Window, WindowOptions};
 use std::fs;
+use std::time::{Duration, SystemTime};
 
 fn main() {
 	let matches = App::new("chip8-rs")
@@ -33,11 +34,31 @@ fn main() {
 			panic!("{}", e);
 		});
 
-	while window.is_open() && !window.is_key_down(Key::Escape) {
-		processor.update_keys(&window);
+	let mut clock_timer = SystemTime::now();
+	let mut clock_display = SystemTime::now();
+	let mut clock_cycle = SystemTime::now();
+	let mut clock_keys = SystemTime::now();
 
-		window.update_with_buffer(&processor.get_minifb_buffer())
-			.unwrap();
-		processor.cycle();
+	while window.is_open() && !window.is_key_down(Key::Escape) {
+		if clock_timer.elapsed().unwrap() > Duration::from_millis(20) {
+			processor.update_clock();
+			clock_timer = SystemTime::now();
+		}
+
+		if clock_keys.elapsed().unwrap() > Duration::from_millis(20) {
+			processor.update_keys(&window);
+			clock_keys = SystemTime::now();
+		}
+
+		if clock_cycle.elapsed().unwrap() > Duration::from_millis(20) {
+			processor.cycle();
+			clock_cycle = SystemTime::now();
+		}
+
+		if clock_display.elapsed().unwrap() > Duration::from_millis(20) {
+			window.update_with_buffer(&processor.get_minifb_buffer())
+				.unwrap();
+			clock_display = SystemTime::now();
+		}
 	}
 }
