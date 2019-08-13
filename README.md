@@ -1,17 +1,17 @@
 # chip8-rs
 
-	This a basic amulator of chip8 processor. It is part of a project where i would like to make a full environnement for this processor. It will include this emulator, an assembler, a disassembler and finally a higher level language with his compiler.
+This a basic emulator of chip8 processor. It is part of a project where i would like to make a full environnement for this processor. It will include this emulator, an assembler, a disassembler and finally a higher level language with his compiler.
 
 ## Why this project
 
-	- learning rust
-	- deal with low level details
-	- get feedback
-	- good documentation about chip 8
+- learning rust
+- deal with low level details
+- get feedback
+- good documentation about chip 8
 
 ## Install
 
-	I'm currently working on CI for easier time at installing it but for now you have to follow those steps:
+I'm currently working on CI for easier time at installing it but for now you have to follow those steps:
 
 ### Install rust:
 All information [here](https://www.rust-lang.org/tools/install)
@@ -39,19 +39,20 @@ All information [here](https://www.rust-lang.org/tools/install)
 
 ### keys
 keyboard from machine using chip8:
-|  	|  	| 	|  	|
-|---	|---	|---	|---	|
-| 7 	| 8 	| 9 	| C 	|
-| 4 	| 5 	| 6 	| D 	|
-| 1 	| 2 	| 3 	| E 	|
-| A 	| 0 	| B 	| F 	|
+
+| 7 		| 8	 	| 9	 	| C	 	|
+| :---:		| :---:		| :---:		| :---:		|
+| **4** 	| **5** 	| **6** 	| **D** 	|
+| **1** 	| **2** 	| **3** 	| **E** 	|
+| **A** 	| **0** 	| **B** 	| **F** 	|
+
 keys used by my emulator:
-|  	|  	| 	|  	|
-|---	|---	|---	|---	|
-| F1 	| F2 	| F3 	| F4 	|
-| A 	| Z 	| E 	| R 	|
-| Q 	| S 	| D 	| F 	|
-| W 	| X 	| C 	| V 	|
+
+| F1 		| F2	 	| F3	 	| F4	 	|
+| :---:		| :---:		| :---:		| :---:		|
+| **A** 	| **Z** 	| **E** 	| **R** 	|
+| **Q** 	| **S** 	| **D** 	| **F** 	|
+| **W** 	| **X** 	| **C** 	| **V** 	|
 
 ### games
 
