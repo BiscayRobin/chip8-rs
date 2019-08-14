@@ -11,11 +11,11 @@ This a basic emulator of chip8 processor. It is part of a project where i would 
 
 ## Install
 
-### from release.zip (linux only)
+### from releases
 
-dowload release.zip from releases page
+dowload chip8-rs-architecture.tar.gz from releases page of this project
 ``` 
-unzip release.zip 
+tar -xf release.zip 
 chmod +x chip8-rs 
 ```
 have fun
