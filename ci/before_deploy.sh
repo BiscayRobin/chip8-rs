@@ -2,6 +2,8 @@
 
 set -ex
 
+git fetch --tags
+
 main() {
     local src=$(pwd) \
           stage=
@@ -20,8 +22,16 @@ main() {
     # TODO Update this to build the artifacts that matter to you
     cross rustc --bin chip8-rs --target $TARGET --release -- -C lto
 
+    
     # TODO Update this to package the right artifacts
-    cp target/$TARGET/release/chip8-rs $stage/
+    case $TARGET in
+	*windows*)
+	    cp target/$TARGET/release/chip8-rs.exe $stage/
+	    ;;
+	*)		
+    	    cp target/$TARGET/release/chip8-rs $stage/
+	    ;;
+    esac
     cp $src/README.md $stage/
     cp -r $src/c8games $stage/
 
