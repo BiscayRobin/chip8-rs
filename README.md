@@ -1,4 +1,4 @@
-# chip8-rs
+# chip8-rs [![Build Status](https://travis-ci.org/BiscayRobin/chip8-rs.svg?branch=master)](https://travis-ci.org/BiscayRobin/chip8-rs)
 
 This a basic emulator of chip8 processor. It is part of a project where i would like to make a full environnement for this processor. It will include this emulator, an assembler, a disassembler and finally a higher level language with his compiler.
 
@@ -11,21 +11,30 @@ This a basic emulator of chip8 processor. It is part of a project where i would 
 
 ## Install
 
-I'm currently working on CI for easier time at installing it but for now you have to follow those steps:
+### from release.zip (linux only)
 
-### Install rust:
+dowload release.zip from releases page
+``` 
+unzip release.zip 
+chmod +x chip8-rs 
+```
+have fun
+
+### with source:
+
+#### Install rust:
 All information [here](https://www.rust-lang.org/tools/install)
 
-### clone or download the repository
+#### clone or download from releases
 * clone: `git clone git@github.com:BiscayRobin/chip8-rs.git`
 
-### build
+#### build
  ```BASH
  cd chip8-rs
  cargo build --release
  ```
 
-### run
+#### run
 
  ```BASH
  target/release/chip8-rs --help
@@ -88,3 +97,5 @@ from upper left sight:
 [http://devernay.free.fr/hacks/chip8/C8TECH10.HTM](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
 
 [https://en.wikipedia.org/wiki/CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
+
+[https://github.com/japaric/trust](https://github.com/japaric/trust)

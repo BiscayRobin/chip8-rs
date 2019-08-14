@@ -1,8 +1,14 @@
 [package]
 name = "chip8-rs"
-version = "0.1.0"
-authors = ["saging"]
+version = "0.5.0"
+authors = ["Robin Biscay <biscay.rob@gmail.com"]
 edition = "2018"
+description = "emulator for old processor called chip 8"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/BiscayRobin/chip8-rs"
+repository = "https://github.com/BiscayRobin/chip8-rs"
+keywords = ["emulator","window","learning"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
