@@ -21,6 +21,7 @@ impl Display {
 		}
 	}
 
+	#[cfg(test)]
 	pub fn dump(&self) -> [bool; 64 * 32] {
 		self.screen
 	}
