@@ -21,6 +21,10 @@ impl Display {
 		}
 	}
 
+	pub fn dump(&self) -> [bool; 64 * 32] {
+		self.screen
+	}
+
 	pub fn cls(&mut self) {
 		self.screen = [false; 64 * 32];
 	}
