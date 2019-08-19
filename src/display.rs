@@ -1,13 +1,7 @@
-use crate::bits::GetBits;
+use sbitty::GetBit;
 
 pub struct Display {
 	screen: [bool; 64 * 32],
-}
-
-impl GetBits for u8 {
-	fn get_bit(&self, index: usize) -> bool {
-		(self >> index) % 2 == 1
-	}
 }
 
 fn coord_to_index(x: usize, y: usize, width: usize) -> usize {
@@ -33,7 +27,7 @@ impl Display {
 	pub fn draw_line_at(&mut self, byte: u8, idx: u8, idy: u8) -> bool {
 		let mut collision = false;
 		for i in 0..8 {
-			let to_print = byte.get_bit(7 - i);
+			let to_print = byte.get_bit(7 - i).unwrap_or(false);
 			if self.screen
 				[coord_to_index((idx as usize + i) % 64, (idy as usize) % 32, 64)]
 				&& to_print
