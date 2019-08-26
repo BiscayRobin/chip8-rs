@@ -50,12 +50,12 @@ fn main() {
 			clock_keys = SystemTime::now();
 		}
 
-		if clock_cycle.elapsed().unwrap() > Duration::from_millis(20) {
+		if clock_cycle.elapsed().unwrap() > Duration::from_millis(2) {
 			processor.cycle();
 			clock_cycle = SystemTime::now();
 		}
 
-		if clock_display.elapsed().unwrap() > Duration::from_millis(20) {
+		if clock_display.elapsed().unwrap() > Duration::from_millis(10) {
 			window.update_with_buffer(&processor.get_minifb_buffer())
 				.unwrap();
 			clock_display = SystemTime::now();
