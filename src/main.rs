@@ -45,7 +45,7 @@ fn main() {
 			clock_timer = SystemTime::now();
 		}
 
-		if clock_keys.elapsed().unwrap() > Duration::from_millis(20) {
+		if clock_keys.elapsed().unwrap() > Duration::from_millis(5) {
 			processor.update_keys(&window);
 			clock_keys = SystemTime::now();
 		}
