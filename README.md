@@ -13,12 +13,20 @@ This a basic emulator of chip8 processor. It is part of a project where i would 
 
 ### from releases
 
-dowload chip8-rs-architecture.tar.gz from releases page of this project
+dowload chip8-rs-v1.5.0-*.tar.gz file corresponding to your computer from releases page of this project.
+
++ Mac: `chip8-rs-v1.5.0-x86_64-apple-darwin.tar.gz`
++ Windows: `chip8-rs-v1.5.0-x86_64-pc-windows-gnu.tar.gz`
++ Linux:
+	+ find architecure name: `uname -a`
+	+ corresponding archive name is: ```echo "chip8-rs-v1.5.0-`uname -m`-unknown-linux-gnu.tar.gz"```
+
+Decompress the downloaded archive:
 ``` 
-tar -xf release.zip 
+tar xf <archive_name> 
 chmod +x chip8-rs 
 ```
-have fun
+have fun.
 
 ### with source:
 
